@@ -54,6 +54,7 @@
     "hirunews-scrap":"1.1.4",
     "@sl-code-lords/esana-news":"1.1.0",
     "rss-parser":"3.13.0",
-    "google-translate-api-x":"10.7.2"
+    "google-translate-api-x":"10.7.2",
+    "@distube/ytdl-core":"4.16.12"
   }
 }
