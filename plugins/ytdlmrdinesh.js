@@ -87,7 +87,7 @@ const yt = await ytsearch(q);
     let data = await response.json();
     
     if (data.status !== 200 || !data.success || !data.result.downloadUrl) {
-        return reply("*සමාවන්න ඔබ ඉල්ලු දෙය ලබා දිය නොහැක. api down වීමක් හේතුවෙන් dwonlod අසාර්ථක වේ. Zepix වෙතින් ඉක්මනින් යාවත්කාලින වේ.*");
+        return reply("Failed to fetch the audio. Please try again later.");
     }
     
     let ytmsg = `╔═══〔 *𓆩QUEEN-SADU𓆪* 〕═══❒
@@ -122,7 +122,7 @@ const yt = await ytsearch(q);
 
 } catch (e) {
     console.log(e);
-    reply("සමාවන්න ඔබ ඉල්ලු දෙය ලබා දිය නොහැක. api down වීමක් හේතුවෙන් dwonlod අසාර්ථක වේ. Zepix වෙතින් ඉක්මනින් යාවත්කාලින වේ.*");
+    reply("An error occurred. Please try again later.");
 }
 
 });
