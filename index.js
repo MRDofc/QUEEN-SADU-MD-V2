@@ -1,5 +1,5 @@
 const {
-  default: makeWASocket,
+    default: makeWASocket,
     useMultiFileAuthState,
     DisconnectReason,
     jidNormalizedUser,
@@ -15,13 +15,12 @@ const {
     MessageRetryMap,
     generateForwardMessageContent,
     generateWAMessageFromContent,
-    generateMessageID, makeInMemoryStore,
+    generateMessageID,
+    makeInMemoryStore,
     jidDecode,
     fetchLatestBaileysVersion,
     Browsers
-  const { default: makeWASocket, useMultiFileAuthState } = require('@whiskeysockets/baileys');
-
-  
+} = require('@whiskeysockets/baileys');
   
   const l = console.log
   const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
