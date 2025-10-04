@@ -19,7 +19,8 @@ const {
     jidDecode,
     fetchLatestBaileysVersion,
     Browsers
-  } = require('@whiskeysockets/baileys')
+  } = const { default: makeWASocket, useMultiFileAuthState } = require('@whiskeysockets/baileys');
+
   
   
   const l = console.log
