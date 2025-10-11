@@ -1,6 +1,6 @@
 const config = require('../config');
 const { cmd } = require('../command');
-const { ytsearch } = require('@dark-yasiya/yt-dl.js'); // Only ytsearch is needed now
+const { ytsearch } = require('@dark-yasiya/yt-dl.js'); 
 
 // Define constants for the new API
 const API_BASE_URL = "https://ytdl.sandarux.sbs/api/download";
@@ -28,17 +28,21 @@ cmd({
         
         let yts = yt.results[0];  
         
-        // 2. Construct New MP4 API URL (quality=360 specified by user)
+        // 2. Construct New MP4 API URL
         const apiUrl = `${API_BASE_URL}?url=${encodeURIComponent(yts.url)}&format=mp4&quality=360&apikey=${API_KEY}`;
         
         // 3. Fetch data from the new API
         let response = await fetch(apiUrl);
         let data = await response.json();
         
-        // 4. Validate the response (assuming download_url is the key for video download)
-        if (!data.result || !data.result.download_url) {
-             console.log("API Response Error (MP4):", data);
-            return reply("Failed to fetch the video from the new API. Please try again later.");
+        // --- Enhanced MP4 Validation and Extraction ---
+        // We look for download_url first, then fallback to url, or simply assume data.result.url might hold it.
+        const downloadUrl = data.result?.download_url || data.result?.url;
+
+        if (!downloadUrl) {
+             console.error("API Response Error (MP4 - Missing URL):", data);
+             // Return the failure message if no URL is found
+            return reply("Failed to fetch the video from the new API. Please try again later. (Check console for API response details)");
         }
         
         // --- Message Construction ---
@@ -56,24 +60,24 @@ cmd({
 ╚══════════════════❒
 *ᴩᴏᴡᴇʀᴇᴅ ʙʏ ©ᴍʀ ᴅɪɴᴇꜱʜ ᴏꜰᴄ*`;
 
-        // 5. Send results (using data.result.download_url and data.result.thumbnail as per old logic)
+        // 5. Send results 
         
         // Send video details with thumbnail
         await conn.sendMessage(from, { 
-            image: { url: data.result.thumbnail || yts.thumbnail || '' }, 
+            image: { url: data.result?.thumbnail || yts.thumbnail || '' }, 
             caption: ytmsg 
         }, { quoted: mek });
         
         // Send video file
         await conn.sendMessage(from, { 
-            video: { url: data.result.download_url }, 
+            video: { url: downloadUrl }, 
             mimetype: "video/mp4",
             caption: `*${yts.title}*\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ᴅɪɴᴇꜱʜ🎐*` 
         }, { quoted: mek });
         
         // Send document file (optional)
         await conn.sendMessage(from, { 
-            document: { url: data.result.download_url }, 
+            document: { url: downloadUrl }, 
             mimetype: "video/mp4", 
             fileName: `${yts.title}.mp4`, 
             caption: `*${yts.title}*\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ᴅɪɴᴇꜱʜ🎐*`
@@ -115,10 +119,13 @@ cmd({
         let response = await fetch(apiUrl);
         let data = await response.json();
         
-        // 4. Validate the response (assuming downloadUrl is the key for audio download)
-        if (!data.result || !data.result.downloadUrl) {
-            console.log("API Response Error (MP3):", data);
-            return reply("Failed to fetch the audio from the new API. Please try again later.");
+        // --- Enhanced MP3 Validation and Extraction ---
+        // We look for downloadUrl first, then fallback to url, or simply check the result object
+        const downloadUrl = data.result?.downloadUrl || data.result?.url;
+
+        if (!downloadUrl) {
+            console.error("API Response Error (MP3 - Missing URL):", data);
+            return reply("Failed to fetch the audio from the new API. Please try again later. (Check console for API response details)");
         }
         
         // --- Message Construction ---
@@ -136,25 +143,25 @@ cmd({
 ╚══════════════════❒
 *ᴩᴏᴡᴇʀᴇᴅ ʙʏ © ᴍʀ ᴅɪɴᴇꜱʜ*`;
 
-        // 5. Send results (using data.result.downloadUrl and data.result.image as per old logic)
+        // 5. Send results 
 
         // Send song details with thumbnail
         await conn.sendMessage(from, { 
-            image: { url: data.result.image || yts.thumbnail || '' }, 
+            image: { url: data.result?.image || yts.thumbnail || '' }, 
             caption: ytmsg 
         }, { quoted: mek });
         
         // Send audio file
         await conn.sendMessage(from, { 
-            audio: { url: data.result.downloadUrl }, 
+            audio: { url: downloadUrl }, 
             mimetype: "audio/mpeg" 
         }, { quoted: mek });
         
         // Send document file
         await conn.sendMessage(from, { 
-            document: { url: data.result.downloadUrl }, 
+            document: { url: downloadUrl }, 
             mimetype: "audio/mpeg", 
-            fileName: `${yts.title}.mp3`, // Changed to yts.title for consistency
+            fileName: `${yts.title}.mp3`, 
             caption: `> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ᴅɪɴᴇꜱʜ🎐*`
         }, { quoted: mek });
 
