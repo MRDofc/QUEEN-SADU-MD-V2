@@ -35,14 +35,14 @@ cmd({
         let response = await fetch(apiUrl);
         let data = await response.json();
         
-        // --- Enhanced MP4 Validation and Extraction ---
-        // We look for download_url first, then fallback to url, or simply assume data.result.url might hold it.
-        const downloadUrl = data.result?.download_url || data.result?.url;
+        // --- IMPROVED MP4 DATA EXTRACTION ---
+        // Check top level (data.download_url) first, then data.result
+        const downloadUrl = data.download_url || data.result?.download_url || data.result?.url;
+        const thumbnail = data.thumbnail || data.result?.thumbnail || yts.thumbnail || '';
 
         if (!downloadUrl) {
              console.error("API Response Error (MP4 - Missing URL):", data);
-             // Return the failure message if no URL is found
-            return reply("Failed to fetch the video from the new API. Please try again later. (Check console for API response details)");
+            return reply("Failed to fetch the video from the API. Download URL not found in response.");
         }
         
         // --- Message Construction ---
@@ -64,7 +64,7 @@ cmd({
         
         // Send video details with thumbnail
         await conn.sendMessage(from, { 
-            image: { url: data.result?.thumbnail || yts.thumbnail || '' }, 
+            image: { url: thumbnail }, 
             caption: ytmsg 
         }, { quoted: mek });
         
@@ -119,13 +119,15 @@ cmd({
         let response = await fetch(apiUrl);
         let data = await response.json();
         
-        // --- Enhanced MP3 Validation and Extraction ---
-        // We look for downloadUrl first, then fallback to url, or simply check the result object
-        const downloadUrl = data.result?.downloadUrl || data.result?.url;
+        // --- IMPROVED MP3 DATA EXTRACTION ---
+        // Check top level (data.downloadUrl) first, then data.result
+        const downloadUrl = data.downloadUrl || data.result?.downloadUrl || data.result?.url;
+        const thumbnail = data.thumbnail || data.result?.image || yts.thumbnail || '';
+
 
         if (!downloadUrl) {
             console.error("API Response Error (MP3 - Missing URL):", data);
-            return reply("Failed to fetch the audio from the new API. Please try again later. (Check console for API response details)");
+            return reply("Failed to fetch the audio from the API. Download URL not found in response.");
         }
         
         // --- Message Construction ---
@@ -147,7 +149,7 @@ cmd({
 
         // Send song details with thumbnail
         await conn.sendMessage(from, { 
-            image: { url: data.result?.image || yts.thumbnail || '' }, 
+            image: { url: thumbnail }, 
             caption: ytmsg 
         }, { quoted: mek });
         
