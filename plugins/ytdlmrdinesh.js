@@ -33,15 +33,16 @@ cmd({
         
         // 3. Fetch data from the new API
         let response = await fetch(apiUrl);
-        let data = await response.json();
+        let apiData = await response.json(); // Renamed 'data' to 'apiData' to avoid conflict
         
-        // --- IMPROVED MP4 DATA EXTRACTION ---
-        // Check top level (data.download_url) first, then data.result
-        const downloadUrl = data.download_url || data.result?.download_url || data.result?.url;
-        const thumbnail = data.thumbnail || data.result?.thumbnail || yts.thumbnail || '';
+        // --- FINAL MP4 DATA EXTRACTION ---
+        // Look for data.data.download_url (or data.data.url) based on latest API structure analysis
+        const extractedData = apiData.data || apiData.result || apiData;
+        const downloadUrl = extractedData.download_url || extractedData.url; // Use download_url or url
+        const thumbnail = extractedData.thumbnail || yts.thumbnail || '';
 
         if (!downloadUrl) {
-             console.error("API Response Error (MP4 - Missing URL):", data);
+             console.error("API Response Error (MP4 - Missing URL):", apiData);
             return reply("Failed to fetch the video from the API. Download URL not found in response.");
         }
         
@@ -117,16 +118,17 @@ cmd({
         
         // 3. Fetch data from the new API
         let response = await fetch(apiUrl);
-        let data = await response.json();
+        let apiData = await response.json(); // Renamed 'data' to 'apiData' to avoid conflict
         
-        // --- IMPROVED MP3 DATA EXTRACTION ---
-        // Check top level (data.downloadUrl) first, then data.result
-        const downloadUrl = data.downloadUrl || data.result?.downloadUrl || data.result?.url;
-        const thumbnail = data.thumbnail || data.result?.image || yts.thumbnail || '';
+        // --- FINAL MP3 DATA EXTRACTION ---
+        // Look for data.data.downloadUrl based on latest API structure analysis
+        const extractedData = apiData.data || apiData.result || apiData;
+        const downloadUrl = extractedData.downloadUrl || extractedData.url; // Use downloadUrl or url
+        const thumbnail = extractedData.thumbnail || extractedData.image || yts.thumbnail || '';
 
 
         if (!downloadUrl) {
-            console.error("API Response Error (MP3 - Missing URL):", data);
+            console.error("API Response Error (MP3 - Missing URL):", apiData);
             return reply("Failed to fetch the audio from the API. Download URL not found in response.");
         }
         
